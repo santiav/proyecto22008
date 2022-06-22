@@ -1,0 +1,25 @@
+[
+   
+    {
+        "data": [
+            {
+                "id": "1",
+                "nombre": "Producto 1",
+                "rutaImagen": "https:\/\/via.placeholder.com\/400x250",
+                "descripcion": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin malesuada et ex id condimentum. In sagittis ipsum quis suscipit lobortis. Aliquam quis volutpat tortor. Aenean scelerisque convallis lacinia. Etiam a consectetur nibh, non accumsan neque. Sed congue quam ut arcu volutpat mollis sit amet nec velit. Ut id lorem semper, sagittis odio eget, ornare justo. Cras interdum ut magna ullamcorper ultrices. Nulla ornare quam quis est pharetra, eu semper sapien cursus. Donec eu magna vel dui bland",
+                "caracteristicas": "i3, 128gb, 4gb ram, pantalla 13, 1.2kg",
+                "precio": "199",
+                "stock": "128"
+            },
+            {
+                "id": "2",
+                "nombre": "Producto 2",
+                "rutaImagen": "https:\/\/via.placeholder.com\/400x250",
+                "descripcion": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin malesuada et ex id condimentum. In sagittis ipsum quis suscipit lobortis. Aliquam quis volutpat tortor. Aenean scelerisque convallis lacinia. Etiam a consectetur nibh, non accumsan neque. Sed congue quam ut arcu volutpat mollis sit amet nec velit. Ut id lorem semper, sagittis odio eget, ornare justo. Cras interdum ut magna ullamcorper ultrices. Nulla ornare quam quis est pharetra, eu semper sapien cursus. Donec eu magna vel dui bland",
+                "caracteristicas": "i5, 128gb, 4gb ram, pantalla 13, 1.2kg",
+                "precio": "249",
+                "stock": "78"
+            }
+        ]
+    }
+]
