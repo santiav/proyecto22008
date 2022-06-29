@@ -2,20 +2,30 @@ const express = require('express')
 const app = express()
 const datos = require('./productos.json')
 require('./helpers/helper');
+const path = require('path');
+
 
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({
   extended: false
 }));
+app.use(express.static('public'));
 
 // para recibir emails 
 let nodemailer = require('nodemailer');
 
-// plantilla
+// plantilla HBS
 const hbs = require('hbs');
 app.set('view engine', 'hbs');
+app.set('views', [
+  path.join('./views/front'), // adjuntar carpeta a "views"
+  path.join('./views/back'),
+  path.join('./views')
+])
+hbs.registerPartials(__dirname + '/views/partials');
 
+// Rutas FRONT
 app.get('/', function (req, res) {
   res.render('index', {
     productos: datos[0].data
@@ -65,6 +75,41 @@ app.post('/contacto', function(req, res) {
     }
   })
 })
+
+app.get('/como-comprar', function(req, res) {
+  res.render('como-comprar')
+})
+
+app.get('/detalle-producto', function(req, res) {
+  res.render('detalle-producto')
+})
+
+app.get('/sobre-nosotros', function(req, res) {
+  res.render('sobre-nosotros')
+})
+
+// rutas BACK
+
+app.get('/admin', function(req, res) {
+  res.render('admin')
+})
+
+app.get('/agregar-producto', function(req, res) {
+  res.render('agregar-producto')
+})
+
+app.get('/editar-producto', function(req, res) {
+  res.render('editar-producto')
+})
+
+app.get('/login', function(req, res) {
+  res.render('login')
+})
+
+// 404
+app.use(function(req, res, next) {
+  res.status(404).render('404');
+});
 
 app.listen(3000, function() {
     console.log("Servidor ONLINE en puerto 3000")
