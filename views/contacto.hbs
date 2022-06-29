@@ -76,10 +76,8 @@
     <div class="contact-section">
         <div class="container">
 
-             {{#if mostrar}}
-                <div class="text-center alert alert-danger" role="alert" >{{mensaje}}</div>
-                {{else}}
-                <div class="text-center alert alert-success" role="alert" >{{mensaje}}</div>
+            {{#if mostrar}}
+                <div class="text-center alert alert-{{clase}}" role="alert" >{{mensaje}}</div>
             {{/if}}
             <div class="row">
                 <!-- Contact Form -->
