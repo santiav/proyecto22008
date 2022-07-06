@@ -1,14 +1,23 @@
 require('dotenv').config()
-const datos = require('../productos.json')
+const db = require('../db')
+
 // para recibir emails 
 let nodemailer = require('nodemailer');
 
 
 // INICIO:GET 
 const inicioGET = function (req, res) {
-    res.render('index', {
-        productos: datos[0].data
+    
+    let sql = 'SELECT * FROM productos'
+    db.query(sql, function(err,data) {
+        if (err) res.send(`Ocurrió el siguiente error: ${err}`)
+        console.log(data)
+        res.render('index', {
+            titulo: "Mi emprendimiento",
+            productos: data
+        })
     })
+
 }
 
 const contactoGET = function (req, res) {
