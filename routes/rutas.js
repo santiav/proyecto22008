@@ -24,15 +24,21 @@ router.get('/sobre-nosotros', sobreNosotrosGET)
 const {
     adminGET,
     agregarProductoGET,
-    editarProductoGET,
+    agregarProductoPOST,
+    editarProducto_ID,
+    borrarProducto_ID,
+    editarProductoPOST_ID,
     loginGET
 } = require('../controllers/back.ctrl')
 
 router.get('/admin', adminGET)
 
 router.get('/agregar-producto', agregarProductoGET)
+router.post('/agregar', agregarProductoPOST)
 
-router.get('/editar-producto', editarProductoGET)
+router.get('/editar-producto/:id', editarProducto_ID)
+router.post('/editar/:id', editarProductoPOST_ID)
+router.get('/borrar/:id', borrarProducto_ID)
 
 router.get('/login', loginGET)
 
