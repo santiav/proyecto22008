@@ -1,7 +1,11 @@
 
 
 const adminGET = function (req, res) {
-    res.render('admin')
+    
+
+    
+
+
 }
 
 const agregarProductoGET = function (req, res) {

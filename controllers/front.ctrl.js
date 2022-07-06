@@ -68,8 +68,27 @@ const comoComprarGET = function (req, res) {
     res.render('como-comprar')
 }
 
-const detalleProductoGET = function (req, res) {
-    res.render('detalle-producto')
+const detalleProductoGET_ID = function (req, res) {
+   
+    let id = req.params.id // Toma de la URL el valor indicado por el parámetro ej "detalle-producto/1", entonces obtendrá el 1.
+    let sql = "SELECT * FROM productos WHERE id = ?" // Seleccionar de la tabla productos, DONDE el registro tenga el ID 
+    db.query(sql, id, function(err, data) {
+        console.log("DATA -->", data[0])
+        if (err) res.send(`Ocurrió un error ${err.code}`)
+        if (data == "") { // Si no encuentra el ID, entonces obtendrá un vacio
+
+            res.status(404).render('404', {
+                mensaje: `Producto con ID ${id} no existe`
+            })
+        } else {
+            res.render('detalle-producto', {
+                producto: data[0]
+            })
+        }
+    })
+    
+
+
 }
 
 const sobreNosotrosGET = function (req, res) {
@@ -81,6 +100,6 @@ module.exports = {
     contactoGET,
     contactoPOST,
     comoComprarGET,
-    detalleProductoGET,
+    detalleProductoGET_ID,
     sobreNosotrosGET
 }
