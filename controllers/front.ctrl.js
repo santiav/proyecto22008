@@ -7,8 +7,13 @@ let nodemailer = require('nodemailer');
 
 // INICIO:GET 
 const inicioGET = function (req, res) {
+
+    console.log("SESIÓN", req.session)
+    console.log("SESIÓN", req.session.id)
+    req.session.visita = req.session.visita ? req.session.visita + 1 : 1;
+    res.send(`Visita nro ${req.session.visita}`)
     
-    let sql = 'SELECT * FROM productos'
+   /* let sql = 'SELECT * FROM productos'
     db.query(sql, function(err,data) {
         if (err) res.send(`Ocurrió el siguiente error: ${err}`)
         console.log(data)
@@ -16,7 +21,7 @@ const inicioGET = function (req, res) {
             titulo: "Mi emprendimiento",
             productos: data
         })
-    })
+    }) */
 
 }
 

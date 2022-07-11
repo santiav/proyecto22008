@@ -1,8 +1,30 @@
 const express = require('express')
+const session = require('express-session')
+let MySQLStore = require('express-mysql-session')(session);
+const path = require('path');
 const app = express()
 require('./helpers/helper');
-const path = require('path');
 
+let opciones = {
+  host: 'localhost',
+  port: 3306,
+  user: 'root',
+  password: '',
+  database: 'prueba_sesiones'
+}
+
+let almacenamientoSesiones = new MySQLStore(opciones)
+
+
+app.use(session({
+    key: 'proyecto22008',
+    secret: "sarasa",
+    store: almacenamientoSesiones,
+    resave: true,
+    saveUninitialized: false,
+    cookie: {maxAge: 300000} // 5 minutos
+
+}))
 
 
 // Middlewares
