@@ -12,6 +12,7 @@ const inicioGET = function (req, res) {
     console.log("SESIÓN", req.session.id)
     req.session.visita = req.session.visita ? req.session.visita + 1 : 1;
     res.send(`Visita nro ${req.session.visita}`)  */
+
     
     let sql = 'SELECT * FROM productos'
     db.query(sql, function(err,data) {
@@ -19,6 +20,8 @@ const inicioGET = function (req, res) {
         console.log(data)
         res.render('index', {
             titulo: "Mi emprendimiento",
+            logueado: req.session.logueado,
+            usuario: req.session.nombreUsuario,
             productos: data
         })
     }) 
@@ -26,7 +29,11 @@ const inicioGET = function (req, res) {
 }
 
 const contactoGET = function (req, res) {
-    res.render('contacto')
+    res.render('contacto', {
+        titulo: "Contacto",
+        logueado: req.session.logueado,
+        usuario: req.session.nombreUsuario,
+    })
 }
 
 const contactoPOST = function (req, res) {
@@ -70,7 +77,11 @@ const contactoPOST = function (req, res) {
 }
 
 const comoComprarGET = function (req, res) {
-    res.render('como-comprar')
+    res.render('como-comprar', {
+        titulo: "Como comprar",
+        logueado: req.session.logueado,
+        usuario: req.session.nombreUsuario,
+    })
 }
 
 const detalleProductoGET_ID = function (req, res) {
@@ -87,7 +98,10 @@ const detalleProductoGET_ID = function (req, res) {
             })
         } else {
             res.render('detalle-producto', {
-                producto: data[0]
+                producto: data[0],
+                titulo: `Producto ${data[0].nombre}`,
+                logueado: req.session.logueado,
+                usuario: req.session.nombreUsuario,
             })
         }
     })
@@ -97,7 +111,11 @@ const detalleProductoGET_ID = function (req, res) {
 }
 
 const sobreNosotrosGET = function (req, res) {
-    res.render('sobre-nosotros')
+    res.render('sobre-nosotros', {
+        titulo: "Sobre Nosotros",
+        logueado: req.session.logueado,
+        usuario: req.session.nombreUsuario,
+    })
 }
 
 module.exports = {

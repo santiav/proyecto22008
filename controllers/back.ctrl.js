@@ -2,13 +2,16 @@ const db = require('../db')
 
 const adminGET = function (req, res) {
 
-    if (req.session.logged) { // Chequeará si es true de cuando hicimos el login
+    if (req.session.logueado) { // Chequeará si es true de cuando hicimos el login
         let sql = "SELECT * FROM productos"
         db.query(sql, function (err, data) {
             if (err) res.send(`Ocurrió un error ${err.code}`);
 
+            console.log("usuario", req.session)
             res.render('admin', {
                 titulo: "Panel de control",
+                logged: true,
+                usuario: req.session.nombreUsuario,
                 productos: data
             })
 
@@ -28,7 +31,19 @@ const adminGET = function (req, res) {
 }
 
 const agregarProductoGET = function (req, res) {
-    res.render('agregar-producto')
+    if (req.session.logueado) {
+        res.render('agregar-producto', {
+            titulo: "Agregar producto",
+            logged: true,
+            usuario: req.session.nombreUsuario
+        })
+    } else {
+        res.render('login', {
+            titulo: "Login",
+            error: "Por favor loguearse para ver ésta página"
+        })
+    }
+
 }
 
 const agregarProductoPOST = function (req, res) {
@@ -48,23 +63,34 @@ const agregarProductoPOST = function (req, res) {
 
 const editarProducto_ID = function (req, res) {
 
-    let id = req.params.id
-    let sql = "SELECT * FROM productos WHERE id = ?"
-    db.query(sql, id, function (err, data) {
-        if (err) res.send(`Ocurrió un error ${err.code}`);
+    if (req.session.logueado) {
+        let id = req.params.id
+        let sql = "SELECT * FROM productos WHERE id = ?"
+        db.query(sql, id, function (err, data) {
+            if (err) res.send(`Ocurrió un error ${err.code}`);
 
-        if (data == "") {
-            res.send(`
+            if (data == "") {
+                res.send(`
                 <h1>no existe producto con id ${id}</h1>
                 <a href="./admin/">Ver listado de productos</a>    
             `)
-        } else {
-            res.render('editar-producto', {
-                titulo: "Editar producto",
-                producto: data[0]
-            })
-        }
-    })
+            } else {
+                res.render('editar-producto', {
+                    titulo: "Editar producto",
+                    logged: true,
+                    usuario: req.session.nombreUsuario,
+                    producto: data[0]
+                })
+            }
+        })
+    } else {
+        res.render('login', {
+            titulo: "Login",
+            error: "Por favor loguearse para ver ésta página"
+        })
+    }
+
+
 
 
 }
@@ -111,7 +137,7 @@ const loginPOST = function (req, res) {
         db.query(sql, [usuario, clave], function (err, data) {
             console.log("LONGITUD DATA", data.length)
             if (data.length > 0) {
-                req.session.logged = true; // Creamos una propiedad llamada "logged" para que el objeto session almacene el valor "TRUE"
+                req.session.logueado = true; // Creamos una propiedad llamada "logueado" para que el objeto session almacene el valor "TRUE", es para usarlo en el parcial de "header"
                 req.session.nombreUsuario = usuario
                 res.redirect('/admin')
             } else {
@@ -128,6 +154,25 @@ const loginPOST = function (req, res) {
 
 }
 
+const logout = function(req, res) {
+
+    req.session.destroy(function(err) {
+        console.log(`Error en el logout ${err}`)
+    })
+
+    // Al finalizar sesión vuelve al inicio
+	let sql='SELECT * FROM productos';
+    db.query(sql, function (err, data) {
+        if (err) res.send(`Ocurrió un error ${err.code}`);
+
+        res.render('index', { 
+            titulo: "Mi emprendimiento",
+            data
+        })
+    });
+
+}
+
 module.exports = {
     adminGET,
     agregarProductoGET,
@@ -136,5 +181,6 @@ module.exports = {
     agregarProductoPOST,
     editarProducto_ID,
     borrarProducto_ID,
-    editarProductoPOST_ID
+    editarProductoPOST_ID,
+    logout
 }

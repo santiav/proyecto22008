@@ -25,7 +25,10 @@
                             {{producto.descripcion}}
                         </p>
 
-                        <p>{{producto.caracteristicas}}</p>
+                        
+                        {{#listado producto.caracteristicas}}
+                            <li>{{this}}</li>
+                        {{/listado}}
                         <!-- <ul>
                             <li> i7 </li>
                             <li> 11gen </li>

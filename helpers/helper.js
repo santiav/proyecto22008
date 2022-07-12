@@ -27,3 +27,21 @@ hbs.registerHelper('dolarApeso', function(dato) {
     return new Intl.NumberFormat('es-AR',{style: 'currency', currency: 'ARS'}).format(precioFinal)
 
 })
+
+// helper de listado características
+
+hbs.registerHelper("listado", function(producto) {
+
+    // Convierto en array la lista de características separadas previamente con "coma" (i3,128 ssd)
+    console.log("LISTADO PRODDUCTO", producto)
+    let array = objeto.split(",") // [i3,128 ssd]
+    console.log("ARRAY", array)
+    let html = "<ul>"
+
+    // Recorro array para que, cada valor, tenga el html "<li>"
+    for (let item of array) {
+        html = `${html} <li> ${item} </li>`
+    }
+
+    return html + "</ul>";
+})
