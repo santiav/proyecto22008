@@ -56,19 +56,20 @@ const agregarProductoPOST = function (req, res) {
         if (err instanceof multer.MulterError) {
             // Error de Multer al subir imagen
             if (err.code === "LIMIT_FILE_SIZE") {
-                return res.status(400).render('agregar-producto', { error: `Imagen muy grande, por favor ahicar a ${maxSizeMB}` });
+                return res.status(400).render('agregar-producto', { mensaje: `Imagen muy grande, por favor ahicar a ${maxSizeMB}`, clase: danger });
             }
-            return res.status(400).render('agregar-producto', { error: err.code });
+            return res.status(400).render('agregar-producto', { mensaje: err.code, clase: danger });
         } else if (err) {
             // Ocurrió un error desconocido al subir la imagen
-            return res.status(400).render('agregar-producto', { error: err });
+            return res.status(400).render('agregar-producto', { mensaje: err, clase: danger });
         }
 
         // SI TODO OK
         const detalleProducto = req.body; // Solo toma los TEXTOS
-        console.log("FILE --->", file)
-       // const nombreImagen = req.file.originalname; // Tomo el nombre del archivo de la imagen
-      //  detalleProducto.imagen = nombreImagen //{ imagen: "Lenovo X200"}
+        console.log("FILE --->", req.file)
+        
+        const nombreImagen = req.file.filename; // Tomo el nombre del archivo de la imagen
+        detalleProducto.rutaImagen = nombreImagen //{ rutaImagen: "Lenovo X200" DEBE coincidir con el nombre de la columna de la tabla}
         console.log("DETALLE DEL PRODUCTO  --> ", detalleProducto)
 
         // consulta de base de datos
@@ -79,6 +80,7 @@ const agregarProductoPOST = function (req, res) {
         })
         res.render('agregar-producto', {
             mensaje: "Producto agregado correctamente",
+            clase: "success",
             titulo: 'Agregar producto'
         })
 
