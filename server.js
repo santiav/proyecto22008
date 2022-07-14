@@ -55,6 +55,12 @@ app.use(function(req, res, next) {
   res.status(404).render('404');
 });
 
+// Errores 
+app.use(function(err, req, res, next) {
+  console.error("ERR.STACK", err.stack);
+  res.status(500).send('Hubo un error con el servidor ' + err);
+});
+
 app.listen(3000, function() {
     console.log("Servidor ONLINE en puerto 3000")
 })

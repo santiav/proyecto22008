@@ -1,4 +1,7 @@
 const db = require('../db')
+const { upload, maxSizeMB, multer } = require('../helpers/helper')
+
+
 
 const adminGET = function (req, res) {
 
@@ -47,18 +50,41 @@ const agregarProductoGET = function (req, res) {
 }
 
 const agregarProductoPOST = function (req, res) {
-    let detalleProducto = req.body // Tomará un objeto con la info del formulario
 
-    // consulta de base de datos
-    let sql = "INSERT INTO productos SET ?"
-    db.query(sql, detalleProducto, function (err, data) {
-        if (err) res.send(`Ocurrió un error ${err.code}`);
-        console.log("Producto agregado")
+    upload(req, res, function (err) {
+        // Manejo de ERRORES de multer
+        if (err instanceof multer.MulterError) {
+            // Error de Multer al subir imagen
+            if (err.code === "LIMIT_FILE_SIZE") {
+                return res.status(400).render('agregar-producto', { error: `Imagen muy grande, por favor ahicar a ${maxSizeMB}` });
+            }
+            return res.status(400).render('agregar-producto', { error: err.code });
+        } else if (err) {
+            // Ocurrió un error desconocido al subir la imagen
+            return res.status(400).render('agregar-producto', { error: err });
+        }
+
+        // SI TODO OK
+        const detalleProducto = req.body; // Solo toma los TEXTOS
+        console.log("FILE --->", file)
+       // const nombreImagen = req.file.originalname; // Tomo el nombre del archivo de la imagen
+      //  detalleProducto.imagen = nombreImagen //{ imagen: "Lenovo X200"}
+        console.log("DETALLE DEL PRODUCTO  --> ", detalleProducto)
+
+        // consulta de base de datos
+        let sql = "INSERT INTO productos SET ?"
+        db.query(sql, detalleProducto, function (err, data) {
+            if (err) res.send(`Ocurrió un error ${err.code}`);
+            console.log("Producto agregado")
+        })
+        res.render('agregar-producto', {
+            mensaje: "Producto agregado correctamente",
+            titulo: 'Agregar producto'
+        })
+
+
     })
-    res.render('agregar-producto', {
-        mensaje: "Producto agregado correctamente",
-        titulo: 'Agregar producto'
-    })
+
 }
 
 const editarProducto_ID = function (req, res) {
@@ -154,18 +180,18 @@ const loginPOST = function (req, res) {
 
 }
 
-const logout = function(req, res) {
+const logout = function (req, res) {
 
-    req.session.destroy(function(err) {
+    req.session.destroy(function (err) {
         console.log(`Error en el logout ${err}`)
     })
 
     // Al finalizar sesión vuelve al inicio
-	let sql='SELECT * FROM productos';
+    let sql = 'SELECT * FROM productos';
     db.query(sql, function (err, data) {
         if (err) res.send(`Ocurrió un error ${err.code}`);
 
-        res.render('index', { 
+        res.render('index', {
             titulo: "Mi emprendimiento",
             data
         })

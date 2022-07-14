@@ -147,7 +147,9 @@ footer .bi:hover {
   }
   
   
-  
+  .preview img {
+	max-width: 100%;
+  }
   .product-item .product-thumb .preview-meta {
 	position: absolute;
 	text-align: center;
