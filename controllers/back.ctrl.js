@@ -14,7 +14,7 @@ const adminGET = function (req, res) {
             console.log("usuario", req.session)
             res.render('admin', {
                 titulo: "Panel de control",
-                logged: true,
+                logueado: true,
                 usuario: req.session.nombreUsuario,
                 productos: data
             })
@@ -38,7 +38,7 @@ const agregarProductoGET = function (req, res) {
     if (req.session.logueado) {
         res.render('agregar-producto', {
             titulo: "Agregar producto",
-            logged: true,
+            logueado: true,
             usuario: req.session.nombreUsuario
         })
     } else {
@@ -106,7 +106,7 @@ const editarProducto_ID = function (req, res) {
             } else {
                 res.render('editar-producto', {
                     titulo: "Editar producto",
-                    logged: true,
+                    logueado: true,
                     usuario: req.session.nombreUsuario,
                     producto: data[0]
                 })
