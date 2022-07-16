@@ -12,5 +12,10 @@ connection.connect(function(err) {
     console.log('La DB se ha conectado');
 });
 
+setInterval(function () {
+    conn.query('SELECT 1');
+    console.log("manteniendo viva la conexion")
+}, 50000);
+
 
 module.exports = connection
