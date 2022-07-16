@@ -1,4 +1,5 @@
 const db = require('../db')
+const fs = require('fs');
 const { upload, maxSizeMB, multer } = require('../helpers/helper')
 
 
@@ -8,7 +9,7 @@ const adminGET = function (req, res) {
     if (req.session.logueado) { // Chequeará si es true de cuando hicimos el login
         let sql = "SELECT * FROM productos"
         db.query(sql, function (err, data) {
-            if (err) res.send(`Ocurrió un error ${err.code}`);
+            if (err) throw err;
 
             console.log("usuario", req.session)
             res.render('admin', {
@@ -75,7 +76,7 @@ const agregarProductoPOST = function (req, res) {
         // consulta de base de datos
         let sql = "INSERT INTO productos SET ?"
         db.query(sql, detalleProducto, function (err, data) {
-            if (err) res.send(`Ocurrió un error ${err.code}`);
+            if (err) throw err;
             console.log("Producto agregado")
         })
         res.render('agregar-producto', {
@@ -95,7 +96,7 @@ const editarProducto_ID = function (req, res) {
         let id = req.params.id
         let sql = "SELECT * FROM productos WHERE id = ?"
         db.query(sql, id, function (err, data) {
-            if (err) res.send(`Ocurrió un error ${err.code}`);
+            if (err) throw err;
 
             if (data == "") {
                 res.send(`
@@ -124,17 +125,66 @@ const editarProducto_ID = function (req, res) {
 }
 
 const editarProductoPOST_ID = function (req, res) {
-    let id = req.params.id // parámetro ID de la url
-    let detalleProducto = req.body  // datos del formulario
 
-    let sql = "UPDATE productos SET ? WHERE id = ?" // comando SQL para actualizar un registro
 
-    db.query(sql, [detalleProducto, id], function (err, data) {
-        if (err) res.send(`Ocurrió un error ${err.code}`);
-        console.log(data.affectedRows + " registro actualizado");
+    upload(req, res, function (err) {
+        // Manejo de ERRORES de multer
+        if (err instanceof multer.MulterError) {
+            // Error de Multer al subir imagen
+            if (err.code === "LIMIT_FILE_SIZE") {
+                return res.status(400).render('agregar-producto', { mensaje: `Imagen muy grande, por favor ahicar a ${maxSizeMB}`, clase: danger });
+            }
+            return res.status(400).render('agregar-producto', { mensaje: err.code, clase: danger });
+        } else if (err) {
+            // Ocurrió un error desconocido al subir la imagen
+            return res.status(400).render('agregar-producto', { mensaje: err, clase: danger });
+        }
+
+        let id = req.params.id // parámetro ID de la url
+        let detalleProducto = req.body  // datos del formulario
+
+        // chequear si la edición incluyó cambio de imagen
+        if (req.hasOwnProperty("file")) { // Si se subió una imagen entonces multer adjuntó la propiedad "file"
+            console.log("EDITAR: req.FILE -->", req.file)
+            const nombreImagen = req.file.filename;
+            detalleProducto.rutaImagen = nombreImagen
+
+            // 
+            let borrarImagen = 'SELECT rutaImagen FROM productos WHERE id = ?';
+            db.query(borrarImagen, id, function (err, data) {
+                if (err) throw err
+
+                console.log("Imagen a borrar", data[0].rutaImagen)
+                fs.unlink(`./public/uploads/${data[0].rutaImagen}`, function(err) {
+                    if (err) throw err
+
+
+                    // Una vez borrada la imagen se procede a actualizar el registro en la DB
+                    let sql = "UPDATE productos SET ? WHERE id= ?"
+                    db.query(sql, [detalleProducto, id], function (err, data) {
+                        if (err) throw err;
+                        console.log(data.affectedRows + " registro(s) actualizado(s)");
+                    });
+                })
+            })
+        }
+
+        let sql = "UPDATE productos SET ? WHERE id = ?"
+        db.query(sql, [detalleProducto, id], function (err, data) {
+            if (err) throw err;
+            console.log(data.affectedRows + " registro actualizado");
+        })
+
+        res.redirect("/admin")
+
     })
 
-    res.redirect('/admin');
+
+
+ // ------
+
+    
+ 
 }
 
 const borrarProducto_ID = function (req, res) {
@@ -143,7 +193,7 @@ const borrarProducto_ID = function (req, res) {
 
     let sql = "DELETE FROM productos WHERE id = ?"
     db.query(sql, id, function (err, data) {
-        if (err) res.send(`Ocurrió un error ${err.code}`);
+        if (err) throw err;
         console.log(data.affectedRows + " registro borrado");
     })
 
@@ -191,7 +241,7 @@ const logout = function (req, res) {
     // Al finalizar sesión vuelve al inicio
     let sql = 'SELECT * FROM productos';
     db.query(sql, function (err, data) {
-        if (err) res.send(`Ocurrió un error ${err.code}`);
+        if (err) throw err;
 
         res.render('index', {
             titulo: "Mi emprendimiento",

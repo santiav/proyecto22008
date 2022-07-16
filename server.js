@@ -1,16 +1,16 @@
 const express = require('express')
 const session = require('express-session')
+const dotenv = require('dotenv').config()
 let MySQLStore = require('express-mysql-session')(session);
 const path = require('path');
 const app = express()
 require('./helpers/helper');
 
 let opciones = {
-  host: 'localhost',
-  port: 3306,
-  user: 'root',
-  password: '',
-  database: 'prueba_sesiones'
+  host     : process.env.DB_HOST,
+  user     : process.env.DB_USER,
+  password : process.env.DB_PASSWORD,
+  database : process.env.DB_DATABASE,
 }
 
 let almacenamientoSesiones = new MySQLStore(opciones)
@@ -18,7 +18,7 @@ let almacenamientoSesiones = new MySQLStore(opciones)
 
 app.use(session({
     key: 'proyecto22008',
-    secret: "sarasa",
+    secret: process.env.SESSION_SECRET,
     store: almacenamientoSesiones,
     resave: true,
     saveUninitialized: false,
@@ -55,11 +55,6 @@ app.use(function(req, res, next) {
   res.status(404).render('404');
 });
 
-// Errores 
-app.use(function(err, req, res, next) {
-  console.error("ERR.STACK", err.stack);
-  res.status(500).send('Hubo un error con el servidor ' + err);
-});
 
 app.listen(3000, function() {
     console.log("Servidor ONLINE en puerto 3000")

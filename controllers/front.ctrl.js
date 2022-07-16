@@ -39,19 +39,19 @@ const contactoGET = function (req, res) {
 const contactoPOST = function (req, res) {
     // Definimos el transporter
     let transporter = nodemailer.createTransport({
-        host: "smtp.mailtrap.io",
-        port: 2525,
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
         auth: {
-            user: "683bb9e3393240",
-            pass: "99a59f1999facb"
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
         }
     })
     // Definimos el e-mail
     console.log("BODY: ", req.body)
     let data = req.body
     let mailOptions = {
-        from: data.nombre, // de: "Santi"
-        to: "santiago.acosta@bue.edu.ar",
+        from: data.nombre, 
+        to: process.env.EMAIL_TO,
         subject: data.asunto,
         html: `<p> ${data.mensaje}</p>`
     }
@@ -90,7 +90,7 @@ const detalleProductoGET_ID = function (req, res) {
     let sql = "SELECT * FROM productos WHERE id = ?" // Seleccionar de la tabla productos, DONDE el registro tenga el ID 
     db.query(sql, id, function(err, data) {
         console.log("DATA -->", data[0])
-        if (err) res.send(`Ocurrió un error ${err.code}`)
+        if (err) throw err
         if (data == "") { // Si no encuentra el ID, entonces obtendrá un vacio
 
             res.status(404).render('404', {
