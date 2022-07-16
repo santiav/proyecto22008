@@ -6,6 +6,8 @@ const path = require('path');
 const app = express()
 require('./helpers/helper');
 
+let puerto = process.env.PORT || 3000
+
 let opciones = {
   host     : process.env.DB_HOST,
   user     : process.env.DB_USER,
@@ -56,6 +58,6 @@ app.use(function(req, res, next) {
 });
 
 
-app.listen(3000, function() {
+app.listen(puerto, function() {
     console.log("Servidor ONLINE en puerto 3000")
 })
