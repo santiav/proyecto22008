@@ -3,6 +3,9 @@
 
 <head>
     {{> head}}
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
+
 </head>
 
 <body id="backend">
@@ -58,7 +61,9 @@
                     </tr>
                     {{/each}}
                     {{else}}
-                    <tr><td colspan="8">No hay productos, cargá alguno</td></tr>
+                    <tr>
+                        <td colspan="8">No hay productos, cargá alguno</td>
+                    </tr>
                     {{/if}}
 
                 </tbody>
@@ -71,6 +76,17 @@
     </div><!-- /container -->
 
     {{> footer}}
+
+    <script type="module">
+        const dataTable = new simpleDatatables.DataTable(".table", {
+            labels: {
+                info: "Mostrando {start} a {end} de {rows} productos",
+                placeholder: "Buscar...",
+                perPage: "{select} productos por página",
+                noRows: "No hay productos cargados"
+            }
+        })
+    </script>
 
 </body>
 

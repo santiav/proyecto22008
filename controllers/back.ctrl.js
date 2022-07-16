@@ -191,6 +191,19 @@ const borrarProducto_ID = function (req, res) {
 
     let id = req.params.id
 
+    // Borrar imagen
+    let borrarImagen = 'SELECT rutaImagen FROM productos WHERE id = ?';
+    db.query(borrarImagen, [id], function (err, data) {
+        console.log(data[0].rutaImagen)
+        if (err) throw err
+
+        fs.unlink(`public/uploads/${data[0].rutaImagen}`, (err) => {
+            if (err) throw err;
+            console.log('Archivo borrado');
+        });
+    });
+
+    // Borrar desde la base de datos
     let sql = "DELETE FROM productos WHERE id = ?"
     db.query(sql, id, function (err, data) {
         if (err) throw err;
