@@ -68,7 +68,7 @@ const agregarProductoPOST = function (req, res) {
         // SI TODO OK
         const detalleProducto = req.body; // Solo toma los TEXTOS
         console.log("FILE --->", req.file)
-        
+
         const nombreImagen = req.file.filename; // Tomo el nombre del archivo de la imagen
         detalleProducto.rutaImagen = nombreImagen //{ rutaImagen: "Lenovo X200" DEBE coincidir con el nombre de la columna de la tabla}
         console.log("DETALLE DEL PRODUCTO  --> ", detalleProducto)
@@ -155,7 +155,7 @@ const editarProductoPOST_ID = function (req, res) {
                 if (err) throw err
 
                 console.log("Imagen a borrar", data[0].rutaImagen)
-                fs.unlink(`./public/uploads/${data[0].rutaImagen}`, function(err) {
+                fs.unlink(`./public/uploads/${data[0].rutaImagen}`, function (err) {
                     if (err) throw err
 
 
@@ -181,36 +181,42 @@ const editarProductoPOST_ID = function (req, res) {
 
 
 
- // ------
+    // ------
 
-    
- 
+
+
 }
 
 const borrarProducto_ID = function (req, res) {
 
-    let id = req.params.id
 
-    // Borrar imagen
-    let borrarImagen = 'SELECT rutaImagen FROM productos WHERE id = ?';
-    db.query(borrarImagen, [id], function (err, data) {
-        console.log(data[0].rutaImagen)
-        if (err) throw err
+    if (req.session.logueado) {
+        let id = req.params.id
 
-        fs.unlink(`public/uploads/${data[0].rutaImagen}`, (err) => {
-            if (err) throw err;
-            console.log('Archivo borrado');
+        // Borrar imagen
+        let borrarImagen = 'SELECT rutaImagen FROM productos WHERE id = ?';
+        db.query(borrarImagen, [id], function (err, data) {
+            console.log(data[0].rutaImagen)
+            if (err) throw err
+
+            fs.unlink(`public/uploads/${data[0].rutaImagen}`, (err) => {
+                if (err) throw err;
+                console.log('Archivo borrado');
+            });
         });
-    });
 
-    // Borrar desde la base de datos
-    let sql = "DELETE FROM productos WHERE id = ?"
-    db.query(sql, id, function (err, data) {
-        if (err) throw err;
-        console.log(data.affectedRows + " registro borrado");
-    })
+        // Borrar desde la base de datos
+        let sql = "DELETE FROM productos WHERE id = ?"
+        db.query(sql, id, function (err, data) {
+            if (err) throw err;
+            console.log(data.affectedRows + " registro borrado");
+        })
 
-    res.redirect('/admin');
+        res.redirect('/admin');
+    }
+    else {
+        res.render("login", { titulo: "Login", error: "Por favor loguearse para ver ésta página" })
+    }
 
 }
 
